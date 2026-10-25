@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#e50914" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Пульс силы" />
+    <script src="https://telegram.org/js/telegram-web-app.js?64"></script>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Пульс силы — клуб тренировок</title>
+  </head>
+  <body>
+    <div id="app-toast" class="app-toast" role="status" aria-live="polite"></div>
+    <main class="app">
+      <header class="header">
+        <div class="header-row">
+          <div class="brand-lockup">
+            <div class="brand-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M7 19v10m5-14v18m5-13v8m14-8v8m5-13v18m5-14v10M17 22h14v4H17z" fill="currentColor" /></svg></div>
+            <div><span class="eyebrow">ЗАКРЫТЫЙ КЛУБ · ТРЕНИРОВКИ</span><h1>Пульс силы</h1></div>
+          </div>
+          <div class="group-chip" id="group-chip"><span class="online-dot"></span> Проверяем вход…</div>
+        </div>
+      </header>
+
+      <section id="club-setup" class="card club-setup-card" hidden>
+        <div class="section-title"><div><span class="section-kicker">ЗАКРЫТЫЙ КЛУБ</span><h2 id="club-setup-title">Подключение</h2></div><span class="section-icon">⌁</span></div>
+        <p id="club-setup-message" class="hint">Проверяем подключение к клубу.</p>
+        <div id="club-create-area" hidden>
+          <form id="club-create-form" class="club-form">
+            <label>Название зала<input id="club-name" type="text" maxlength="48" placeholder="Например, Железный зал" required /></label>
+            <label>Код владельца<input id="owner-bootstrap-code" type="password" autocomplete="off" placeholder="Код, который зададим при настройке" required /></label>
+            <button type="submit" class="primary-button">Создать клуб <span>↗</span></button>
+          </form>
+        </div>
+        <div id="club-join-area" hidden>
+          <form id="club-join-form" class="club-form">
+            <label>Код приглашения<input id="club-invite-code" type="text" maxlength="40" autocomplete="off" placeholder="Код от владельца клуба" required /></label>
+            <button type="submit" class="primary-button">Вступить в клуб <span>↗</span></button>
+          </form>
+        </div>
+        <p id="club-setup-status" class="setup-status" aria-live="polite"></p>
+      </section>
+
+      <section id="panel-today" class="tab-panel" data-tab-panel="today">
+        <div class="welcome-row"><div><span class="section-kicker">ВОЗВРАЩАЙСЯ К ШТАНГЕ</span><h2>Привет, <span id="dashboard-nickname">атлет</span></h2></div><div class="streak-badge"><span>✦</span><strong id="dashboard-streak">0</strong><small>тренировок</small></div></div>
+        <section class="hero-card">
+          <div class="hero-copy"><span class="hero-label"><span class="live-dot"></span> ТВОЙ ПЛАН</span><h2 id="dashboard-title">Сила строится тренировкой за тренировкой</h2><p id="dashboard-description">Составь программу на 16 недель и отмечай выполненные подходы.</p><div class="hero-actions"><button type="button" class="primary-button" data-go-tab="program">Открыть программу <span>↗</span></button><button type="button" class="hero-link" data-go-tab="log">Записать тренировку <span>＋</span></button></div></div>
+          <div class="hero-mark" aria-hidden="true"><span>PS</span><i></i><i></i><i></i></div>
+          <div id="dashboard-progress" class="progress-wrap"><div class="progress-caption"><span>ЦИКЛ · 16 НЕДЕЛЬ</span><span id="dashboard-progress-label">Пока не начат</span></div><div class="progress-track"><span id="dashboard-progress-bar"></span></div></div>
+        </section>
+        <div class="quick-stat-grid">
+          <article class="quick-stat"><span class="stat-icon">↗</span><small>Тренировок</small><strong id="dashboard-workouts">0</strong></article>
+          <article class="quick-stat"><span class="stat-icon">◎</span><small>Объём за цикл</small><strong id="dashboard-volume">0 <em>кг</em></strong></article>
+          <article class="quick-stat stat-highlight"><span class="stat-icon">✦</span><small>До следующей цели</small><strong>Продолжай</strong></article>
+        </div>
+        <section class="card next-session-card"><div class="section-title"><div><span class="section-kicker">СЛЕДУЮЩИЙ ШАГ</span><h2>Не пропускай ритм</h2></div><span class="section-icon">→</span></div><p class="hint">Записывай результаты, чтобы видеть прогресс и корректировать нагрузку по ощущениям.</p><button type="button" class="secondary full-button" data-go-tab="log">Открыть дневник <span>→</span></button></section>
+      </section>
+
+      <div class="tab-panel" data-tab-panel="program" hidden><section class="card program-card">
+        <div class="section-title">
+          <div><span class="section-kicker">ПЛАНИРОВАНИЕ</span><h2>Твоя программа</h2></div>
+          <span class="pill">16 НЕДЕЛЬ</span>
+        </div>
+        <p class="hint">Введите актуальные максимумы в приседе, жиме и тяге. Проценты растут каждую неделю, повторы и объём постепенно снижаются. Используйте технически чистый 1ПМ; если сомневаетесь, укажите консервативную оценку.</p>
+        <form id="program-form">
+          <div class="row max-row">
+            <label>Присед · 1ПМ, кг<input id="squat-max" type="number" min="1" step="0.5" placeholder="100" required /></label>
+            <label>Жим · 1ПМ, кг<input id="bench-max" type="number" min="1" step="0.5" placeholder="60" required /></label>
+            <label>Тяга · 1ПМ, кг<input id="deadlift-max" type="number" min="1" step="0.5" placeholder="120" required /></label>
+          </div>
+          <div class="row settings-row">
+            <label>Опыт<select id="training-level"><option value="beginner">Начинаю / возвращаюсь</option><option value="regular">Тренируюсь регулярно</option></select></label>
+            <label>Дней в неделю<select id="training-days"><option value="3">3 дня</option><option value="4">4 дня</option></select></label>
+            <label>Упражнений в день<select id="exercise-count"><option value="5">5 упражнений</option><option value="6">6 упражнений</option></select></label>
+            <label>Контроль нагрузки<select id="intensity-method"><option value="percent">Проценты</option><option value="rir">Проценты + RIR</option></select></label>
+            <label>Цикл<select id="cycle-weeks"><option value="16">16 недель · ~4 месяца</option></select></label>
+            <label>Шаг веса<select id="rounding"><option value="2.5">2,5 кг</option><option value="1.25">1,25 кг</option><option value="5">5 кг</option></select></label>
+          </div>
+          <button class="primary-button" type="submit">Составить программу <span aria-hidden="true">↗</span></button>
+        </form>
+        <div id="program-output" class="program-output empty">Укажи максимумы — и здесь появится твой план.</div>
+        <p id="program-feedback" class="program-feedback" aria-live="polite"></p>
+        <p class="hint program-footnote">После тренировки укажите выполненные повторы, подходы и RIR — будущая нагрузка подстроится под результат. В последнюю неделю не проверяйте настоящий максимум; завершите запланированные одиночные подходы и отдохните перед новым циклом.</p>
+      </section></div>
+
+      <section class="tab-panel" data-tab-panel="feed" hidden>
+        <div class="feed-heading"><div><span class="section-kicker">СООБЩЕСТВО</span><h2>Лента зала</h2><p>Сила растёт рядом</p></div><span class="pill group-pill"><span class="online-dot"></span> ЗАКРЫТАЯ ГРУППА</span></div>
+        <div id="community-notice" class="community-notice" hidden></div>
+        <section class="card leaderboard-card"><div class="section-title"><div><span class="section-kicker">ДРУЖЕСКОЕ СОРЕВНОВАНИЕ</span><h2>Ритм зала</h2></div><button id="refresh-leaderboard" type="button" class="secondary compact-action">Обновить</button></div><p class="hint">Кто чаще тренировался за последние 30 дней</p><div id="leaderboard-list" class="leaderboard-list"><div class="empty">Загрузка рейтинга…</div></div></section>
+        <section class="create-post-card">
+          <div class="create-post-top"><div class="avatar avatar-you" id="composer-avatar">ТЫ</div><div><strong id="composer-name">Твоя публикация</strong><small>Только участникам группы</small></div></div>
+          <form id="post-form">
+            <label class="visually-hidden" for="post-caption">Текст публикации</label><textarea id="post-caption" maxlength="360" placeholder="Как прошла тренировка? Поделись подходом или победой…"></textarea>
+            <div id="post-media-preview" class="post-media-preview" hidden></div>
+            <div class="composer-actions"><label class="attach-button" for="post-media"><span>▧</span> Фото / видео<input id="post-media" type="file" accept="image/*,video/*" hidden /></label><button type="submit" class="primary-button">Опубликовать <span>↗</span></button></div>
+          </form>
+        </section>
+        <div class="feed-filter-row"><button class="filter-chip active" type="button" data-feed-filter="all">Вся группа</button><button class="filter-chip" type="button" data-feed-filter="friends">Друзья</button><span class="feed-sort">СВЕЖЕЕ ↓</span></div>
+        <div id="feed-list" class="feed-list"></div>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="log" hidden>
+        <section class="card workout-card">
+        <div class="section-title">
+          <div><span class="section-kicker">СЕГОДНЯ</span><h2 id="form-title">Новая тренировка</h2></div>
+          <span class="section-icon" aria-hidden="true">＋</span>
+        </div>
+        <form id="exercise-form">
+          <label>Упражнение<input id="exercise-name" type="text" placeholder="Жим лёжа" required /></label>
+          <div class="row input-row">
+            <label>Вес, кг<input id="weight" type="number" min="0" step="0.5" placeholder="60" required /></label>
+            <label>Повторы<input id="reps" type="number" min="1" step="1" placeholder="8" required /></label>
+            <label>Подходы<input id="sets" type="number" min="1" step="1" placeholder="3" required /></label>
+          </div>
+          <button type="submit" class="secondary">Добавить упражнение</button>
+        </form>
+        <p class="hint log-note">В тренировке можно поправить вес, повторы и подходы. После последнего рабочего подхода укажите RIR — сколько повторов оставалось в запасе.</p>
+        <div id="current-workout" class="empty">Пока нет упражнений</div>
+        <div class="volume-line"><span>Общий объём</span><strong><span id="current-volume">0</span> кг</strong></div>
+        <div class="actions">
+          <button id="save-workout" class="primary-button" type="button" disabled>Сохранить тренировку</button>
+          <button id="cancel-edit" class="secondary" type="button" hidden>Отменить правку</button>
+        </div>
+      </section>
+        <section class="card records-card">
+        <div class="section-title">
+          <div><span class="section-kicker">ПРОГРЕСС</span><h2>Личные рекорды</h2></div>
+          <span class="section-icon" aria-hidden="true">↗</span>
+        </div>
+        <div id="records" class="empty">Рекордов пока нет</div>
+      </section>
+        <section class="card history-card">
+        <div class="section-head">
+          <div><span class="section-kicker">АРХИВ</span><h2>Последние тренировки</h2></div>
+          <button id="clear-all" class="delete" type="button">Удалить все данные</button>
+        </div>
+        <div class="backup-actions">
+          <button id="export-backup" class="secondary" type="button">Скачать резервную копию</button>
+          <button id="import-backup-button" class="secondary" type="button">Восстановить копию</button>
+          <input id="import-backup-file" type="file" accept="application/json,.json" hidden />
+        </div>
+        <div id="history" class="empty">История пуста</div>
+      </section>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="profile" hidden>
+        <div class="profile-page-heading"><div><span class="section-kicker">ТВОЯ СТРАНИЦА</span><h2>Профиль</h2></div><span class="section-icon">⚙</span></div>
+        <section class="profile-cover-card"><div class="profile-cover-art"><span>СИЛА · ДИСЦИПЛИНА · ПРОГРЕСС</span></div><div class="profile-summary"><div class="avatar profile-avatar" id="profile-avatar">Т</div><div class="profile-name-stack"><h2 id="profile-display-name">Твой профиль</h2><span id="profile-meta">Участник закрытой группы</span></div><span class="member-tag">АТЛЕТ</span></div><div class="profile-mini-stats"><div><strong id="profile-workout-count">0</strong><small>тренировок</small></div><div><strong id="profile-post-count">0</strong><small>публикаций</small></div><div><strong id="profile-friend-count">0</strong><small>друзей</small></div></div></section>
+        <section class="card profile-settings-card"><div class="section-title"><div><span class="section-kicker">ПЕРСОНАЛИЗАЦИЯ</span><h2>О себе</h2></div><span class="section-icon">✎</span></div>
+          <form id="profile-form" class="profile-form">
+            <label>Никнейм<input id="profile-nickname" type="text" maxlength="24" placeholder="Например, iron_fox" required /></label>
+            <div class="row profile-data-row"><label>Возраст<input id="profile-age" type="number" min="14" max="99" placeholder="лет" /></label><label>Вес тела, кг<input id="profile-weight" type="number" min="30" max="300" step="0.1" placeholder="например, 82" /></label></div>
+            <label>Стаж тренировок<input id="profile-experience" type="text" maxlength="80" placeholder="Например: 2 года 4 месяца" /></label><label>Категория<select id="profile-category"><option value="">Не указывать</option><option value="men">Мужская</option><option value="women">Женская</option><option value="open">Открытая</option></select></label>
+            <label class="privacy-toggle"><input id="profile-private-stats" type="checkbox" checked /><span class="toggle-art"></span><span><strong>Скрыть личные данные от группы</strong><small>Никнейм и стаж останутся в клубе</small></span></label>
+            <button type="submit" class="primary-button">Сохранить профиль <span>✓</span></button>
+          </form>
+        </section>
+        <section class="card friends-card"><div class="section-title"><div><span class="section-kicker">ЛЮДИ ИЗ ТВОЕГО ЗАЛА</span><h2>Друзья <span id="friends-count-title" class="count-bubble">0</span></h2></div><span class="section-icon">＋</span></div><form id="friend-form" class="friend-add-form"><label class="visually-hidden" for="friend-nickname">Никнейм участника</label><input id="friend-nickname" type="search" maxlength="24" placeholder="Найти участника по никнейму" autocomplete="off" /><button type="submit" class="secondary">Найти</button></form><div id="member-search-results" class="friends-list search-results" aria-live="polite"></div><div id="friends-list" class="friends-list"></div><div class="invite-card" id="invite-card"><div><strong id="invite-title">Только свои</strong><small id="invite-description">Приглашай ребят из зала в закрытый клуб</small></div><button type="button" class="invite-copy" id="invite-copy">Код <span id="invite-code-label">появится после создания</span></button></div></section>
+        <section class="card theme-card"><div class="section-title"><div><span class="section-kicker">ВНЕШНИЙ ВИД</span><h2>Тема приложения</h2></div><span class="section-icon">◐</span></div><label class="theme-picker">Цветовая тема<select id="theme-select"><option value="red">01 · Чёрный / красный</option><option value="blue">02 · Графит / синий</option><option value="purple">03 · Чёрный / фиолетовый</option><option value="light">04 · Светлая</option></select></label><div class="theme-swatches"><span class="swatch swatch-red"></span><span class="swatch swatch-blue"></span><span class="swatch swatch-purple"></span><span class="swatch swatch-light"></span><small>Выбор сохранится на этом устройстве</small></div></section>
+        <p class="profile-privacy-note">Закрытый клуб · Публикации и профиль видны только участникам клуба.</p>
+      </section>
+
+      <footer class="app-footer">ПУЛЬС СИЛЫ <span>·</span> ТВОЙ ТЕМП, ТВОЙ ПРОГРЕСС</footer>
+    </main>
+    <nav class="bottom-nav" aria-label="Основные разделы">
+      <button type="button" class="nav-item active" data-tab="today" aria-current="page"><span class="nav-icon">⌂</span><span>Сегодня</span></button>
+      <button type="button" class="nav-item" data-tab="program"><span class="nav-icon">▤</span><span>План</span></button>
+      <button type="button" class="nav-item" data-tab="feed"><span class="nav-icon nav-icon-feed">◉</span><span>Лента</span></button>
+      <button type="button" class="nav-item" data-tab="log"><span class="nav-icon">＋</span><span>Дневник</span></button>
+      <button type="button" class="nav-item" data-tab="profile"><span class="nav-icon">○</span><span>Профиль</span></button>
+    </nav>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="social-app.js"></script>
+  </body>
+</html>
